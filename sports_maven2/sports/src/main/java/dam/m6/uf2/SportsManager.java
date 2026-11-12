@@ -2,33 +2,30 @@ package dam.m6.uf2;
 
 import java.sql.Connection;
 
-public class Controller {
+public class SportsManager {
 	Connection conn;
 
 	public static void main(String[] args) { 
 		System.out.println("Current directory (aquí heu de posar el XML): " + System.getProperty("user.dir"));
-		Controller controller = new Controller();
+		SportsManager controller = new SportsManager();
 		controller.init();
 	}
 
 	private void init() {
 
 		this.conn = ConnectionManager.getConnection("database.xml");
-		MainView mainView = new MainView();
-
-		UserPgDAO userDAO = new UserPgDAO(conn);
+		View mainView = new View();
+		AtletaDAO atletaDAO = new AtletaDAO(conn);
 
 		// mainView.mainMenu()
 		int option = mainView.mainMenu();
 		// switch option
 		switch (option) {
 			case 1:
-					mainView.showUsers(userDAO.getAll());
+					
 				break;
-			
 			case 2:
-					User newUser = mainView.addUserForm();
-					userDAO.add(newUser);
+					
 		
 			default:
 				break;
