@@ -1,6 +1,7 @@
 package dam.m6.uf2;
 
 import java.sql.Connection;
+import java.util.List;
 
 public class SportsManager {
 	Connection conn;
@@ -16,24 +17,39 @@ public class SportsManager {
 		this.conn = ConnectionManager.getConnection("database.xml");
 		View mainView = new View();
 		AtletaDAO atletaDAO = new AtletaDAO(conn);
+		EsportDAO esportDAO = new EsportDAO(conn);
 
-		// mainView.mainMenu()
-		int option = mainView.mainMenu();
-		// switch option
-		switch (option) {
-			case 1:
-					
-				break;
-			case 2:
-					
-		
-			default:
-				break;
+		if (conn == null) {
+			mainView.missatge("No s'ha pogut connectar amb la base de dades.");
+			return;
 		}
-		// Afegir Usuari
-		// Llistar usuaris
-
-
-
+		int option;
+		do {
+			option = mainView.mainMenu();
+			switch (option) {
+				case 1:
+					esportDAO.add(mainView.EsportForm());
+					break;
+				case 2:
+					List<Esport> esportsPerAlta = esportDAO.getAll();
+					atletaDAO.add(mainView.AtletaForm(esportsPerAlta));
+					break;
+				case 3:
+					List<Esport> esports = esportDAO.getAll();
+					mainView.LlistaEsports(esports);
+					int sportId = mainView.DemanarEsport();
+					mainView.LlistaAtletes(atletaDAO.getBySport(sportId));
+					break;
+				case 0:
+					break;
+				default:
+					mainView.missatge("Opció no vàlida.");
+			}
+		} while (option != 0);
+		try {
+			conn.close();
+		} catch (java.sql.SQLException e) {
+			mainView.missatge("Error en tancar la connexió: " + e.getMessage());
+		}
 	}
 }
